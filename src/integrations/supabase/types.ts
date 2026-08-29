@@ -97,6 +97,35 @@ export type Database = {
           },
         ]
       }
+      org_credentials: {
+        Row: {
+          organization_id: string
+          password: string
+          updated_at: string
+          username: string
+        }
+        Insert: {
+          organization_id: string
+          password: string
+          updated_at?: string
+          username: string
+        }
+        Update: {
+          organization_id?: string
+          password?: string
+          updated_at?: string
+          username?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "org_credentials_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organizations: {
         Row: {
           abbreviation: string
@@ -142,23 +171,56 @@ export type Database = {
         }
         Relationships: []
       }
+      venue_access: {
+        Row: {
+          organization_id: string
+          venue_id: string
+        }
+        Insert: {
+          organization_id: string
+          venue_id: string
+        }
+        Update: {
+          organization_id?: string
+          venue_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "venue_access_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "venue_access_venue_id_fkey"
+            columns: ["venue_id"]
+            isOneToOne: false
+            referencedRelation: "venues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       venues: {
         Row: {
           code: string
           id: string
           label: string
+          restricted: boolean
           sort_order: number
         }
         Insert: {
           code: string
           id?: string
           label: string
+          restricted?: boolean
           sort_order?: number
         }
         Update: {
           code?: string
           id?: string
           label?: string
+          restricted?: boolean
           sort_order?: number
         }
         Relationships: []
@@ -213,6 +275,10 @@ export type Database = {
           category: Database["public"]["Enums"]["org_category"]
           name: string
         }[]
+      }
+      org_can_book: {
+        Args: { _organization_id: string; _venue_ids: string[] }
+        Returns: boolean
       }
       restore_booking: { Args: { _booking_id: string }; Returns: Json }
       update_booking: {
