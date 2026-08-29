@@ -49,9 +49,11 @@ export type Database = {
           created_at: string
           date: string
           end_time: string
+          event_done: boolean
           id: string
           notes: string | null
           organization_id: string
+          permission_signed: boolean
           purpose: Database["public"]["Enums"]["booking_purpose"]
           start_time: string
           status: Database["public"]["Enums"]["booking_status"]
@@ -61,9 +63,11 @@ export type Database = {
           created_at?: string
           date: string
           end_time: string
+          event_done?: boolean
           id?: string
           notes?: string | null
           organization_id: string
+          permission_signed?: boolean
           purpose: Database["public"]["Enums"]["booking_purpose"]
           start_time: string
           status?: Database["public"]["Enums"]["booking_status"]
@@ -73,9 +77,11 @@ export type Database = {
           created_at?: string
           date?: string
           end_time?: string
+          event_done?: boolean
           id?: string
           notes?: string | null
           organization_id?: string
+          permission_signed?: boolean
           purpose?: Database["public"]["Enums"]["booking_purpose"]
           start_time?: string
           status?: Database["public"]["Enums"]["booking_status"]
@@ -163,6 +169,8 @@ export type Database = {
     }
     Functions: {
       cancel_booking: { Args: { _booking_id: string }; Returns: Json }
+      claim_admin: { Args: never; Returns: Json }
+      claim_organization: { Args: { _abbr: string }; Returns: Json }
       create_booking: {
         Args: {
           _date: string
@@ -175,6 +183,7 @@ export type Database = {
         Returns: Json
       }
       current_org_id: { Args: never; Returns: string }
+      delete_booking: { Args: { _booking_id: string }; Returns: Json }
       find_conflicts: {
         Args: {
           _date: string
@@ -197,6 +206,15 @@ export type Database = {
         }
         Returns: boolean
       }
+      list_organizations: {
+        Args: { _only_unclaimed?: boolean }
+        Returns: {
+          abbreviation: string
+          category: Database["public"]["Enums"]["org_category"]
+          name: string
+        }[]
+      }
+      restore_booking: { Args: { _booking_id: string }; Returns: Json }
       update_booking: {
         Args: {
           _booking_id: string
