@@ -1,0 +1,41 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1787940701124,
+      "tag": "0000_campus_venue_schema_and_seed",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1787940728085,
+      "tag": "0001_tighten_function_grants",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1787940776637,
+      "tag": "0002_org_account_claiming",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1787946186369,
+      "tag": "0003_add_booking_completion_flags",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1787977771782,
+      "tag": "0004_restore_and_delete_booking",
+      "breakpoints": true
+    }
+  ]
+}
