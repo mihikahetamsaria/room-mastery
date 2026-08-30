@@ -1,0 +1,1 @@
+UPDATE public.venues SET restricted = false WHERE code IN ('L1','L2','L3','L8','L9');
