@@ -15,6 +15,7 @@ import { formatDate, formatRange, type Purpose } from "@/lib/campus";
 export type ConfirmedBooking = {
   reference: string;
   purpose: Purpose;
+  customPurpose?: string;
   date: string;
   endDate?: string;
   days?: number;
@@ -31,6 +32,11 @@ export function BookingConfirmation({
   booking: ConfirmedBooking | null;
   onClose: () => void;
 }) {
+  const displayPurpose =
+    booking?.purpose === "Other" && booking.customPurpose?.trim()
+      ? booking.customPurpose.trim()
+      : booking?.purpose;
+
   return (
     <Dialog open={Boolean(booking)} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md">
@@ -49,23 +55,31 @@ export function BookingConfirmation({
 
             <dl className="grid grid-cols-3 gap-x-4 gap-y-3 rounded-md border border-border bg-muted/40 p-4 text-sm">
               <dt className="text-muted-foreground">Reference</dt>
-              <dd className="col-span-2 font-mono font-medium">#{booking.reference}</dd>
+              <dd className="col-span-2 font-mono font-medium">
+                #{booking.reference}
+              </dd>
+
               <dt className="text-muted-foreground">Venue(s)</dt>
               <dd className="col-span-2 font-medium">{booking.venues}</dd>
+
               <dt className="text-muted-foreground">
-                {booking.endDate && booking.endDate > booking.date ? "Dates" : "Date"}
+                {booking.endDate && booking.endDate > booking.date
+                  ? "Dates"
+                  : "Date"}
               </dt>
               <dd className="col-span-2 font-medium">
                 {booking.endDate && booking.endDate > booking.date
                   ? `${formatDate(booking.date)} – ${formatDate(booking.endDate)} (${booking.days ?? 0} days)`
                   : formatDate(booking.date)}
               </dd>
+
               <dt className="text-muted-foreground">Time</dt>
               <dd className="col-span-2 font-medium">
                 {formatRange(booking.start, booking.end)}
               </dd>
+
               <dt className="text-muted-foreground">Purpose</dt>
-              <dd className="col-span-2 font-medium">{booking.purpose}</dd>
+              <dd className="col-span-2 font-medium">{displayPurpose}</dd>
             </dl>
 
             <DialogFooter className="gap-2 sm:justify-between">
