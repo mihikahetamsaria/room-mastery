@@ -18,6 +18,7 @@ export type BookingResult = {
 type CreateInput = {
   organizationId: string;
   purpose: Purpose;
+  customPurpose?: string;
   date: string;
   start: string;
   end: string;
@@ -33,11 +34,13 @@ export const createBookingFn = createServerFn({ method: "POST" })
     const { data: result, error } = await context.supabase.rpc("create_booking", {
       _organization_id: data.organizationId,
       _purpose: data.purpose,
+      _custom_purpose: data.customPurpose ?? null,
       _date: data.date,
       _start: data.start,
       _end: data.end,
       _venue_ids: data.venueIds,
     });
+
     if (error) throw new Error(error.message);
     return result as unknown as BookingResult;
   });
@@ -49,11 +52,13 @@ export const updateBookingFn = createServerFn({ method: "POST" })
     const { data: result, error } = await context.supabase.rpc("update_booking", {
       _booking_id: data.bookingId,
       _purpose: data.purpose,
+      _custom_purpose: data.customPurpose ?? null,
       _date: data.date,
       _start: data.start,
       _end: data.end,
       _venue_ids: data.venueIds,
     });
+
     if (error) throw new Error(error.message);
     return result as unknown as BookingResult;
   });
@@ -71,6 +76,7 @@ export const checkBookingConflictsFn = createServerFn({ method: "GET" })
       _start: data.start,
       _end: data.end,
     });
+
     if (error) throw new Error(error.message);
     return { conflicts: (result ?? []) as Conflict[] };
   });
@@ -82,6 +88,7 @@ export const cancelBookingFn = createServerFn({ method: "POST" })
     const { error } = await context.supabase.rpc("cancel_booking", {
       _booking_id: data.bookingId,
     });
+
     if (error) throw new Error(error.message);
     return { ok: true };
   });
@@ -93,6 +100,7 @@ export const restoreBookingFn = createServerFn({ method: "POST" })
     const { data: result, error } = await context.supabase.rpc("restore_booking", {
       _booking_id: data.bookingId,
     });
+
     if (error) throw new Error(error.message);
     return result as unknown as BookingResult;
   });
@@ -104,6 +112,7 @@ export const deleteBookingFn = createServerFn({ method: "POST" })
     const { error } = await context.supabase.rpc("delete_booking", {
       _booking_id: data.bookingId,
     });
+
     if (error) throw new Error(error.message);
     return { ok: true };
   });
@@ -119,17 +128,22 @@ export const setBookingFlagsFn = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const patch: { event_done?: boolean; permission_signed?: boolean } = {};
-    if (typeof data.eventDone === "boolean") patch.event_done = data.eventDone;
-    if (typeof data.permissionSigned === "boolean")
-      patch.permission_signed = data.permissionSigned;
-    if (Object.keys(patch).length === 0) return { ok: true };
 
+    if (typeof data.eventDone === "boolean") {
+      patch.event_done = data.eventDone;
+    }
+
+    if (typeof data.permissionSigned === "boolean") {
+      patch.permission_signed = data.permissionSigned;
+    }
+
+    if (Object.keys(patch).length === 0) return { ok: true };
 
     const { error } = await context.supabase
       .from("bookings")
       .update(patch)
       .eq("id", data.bookingId);
+
     if (error) throw new Error(error.message);
     return { ok: true };
   });
-
