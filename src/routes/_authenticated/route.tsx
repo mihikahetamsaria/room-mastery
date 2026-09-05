@@ -64,7 +64,7 @@ function AppShell() {
               </p>
               <p className="text-xs opacity-80">
                 {session?.isAdmin
-                  ? "Dean of Student Activities (Admin)"
+                  ? "Dean of Student Affairs (Admin)"
                   : (session?.organization?.name ?? "Organization portal")}
               </p>
             </div>
