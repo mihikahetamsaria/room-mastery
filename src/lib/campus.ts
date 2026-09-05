@@ -10,7 +10,7 @@ export const PURPOSES = [
 
 export type Purpose = (typeof PURPOSES)[number];
 
-export const EMAIL_DOMAIN = "campus.local";
+export const EMAIL_DOMAIN = "campus.example.com";
 
 export function usernameToEmail(username: string) {
   return `${username.trim().toLowerCase()}@${EMAIL_DOMAIN}`;
