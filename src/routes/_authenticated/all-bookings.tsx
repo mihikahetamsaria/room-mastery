@@ -35,7 +35,7 @@ export const Route = createFileRoute("/_authenticated/all-bookings")({
       {
         property: "og:description",
         content:
-          "Cross-organization booking control for the Dean of Student Activities office.",
+          "Cross-organization booking control for the Dean of Student Affairs office.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
