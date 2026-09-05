@@ -572,6 +572,7 @@ export function BookingForm({
         setConfirmed({
           reference: firstId.slice(0, 8).toUpperCase(),
           purpose,
+          customPurpose: purpose === "Other" ? customPurpose.trim() : undefined,
           date,
           endDate,
           days: dates.length,
@@ -645,6 +646,7 @@ export function BookingForm({
 
         purpose,
         date,
+        customPurpose: purpose === "Other" ? customPurpose.trim() : undefined,
         start,
         end,
 
