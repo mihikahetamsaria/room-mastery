@@ -158,7 +158,7 @@ function LoginPage() {
             Club &amp; Society Venue Booking
           </h1>
           <p className="max-w-prose text-sm text-muted-foreground">
-            Reserve PEC lecture halls L20–L31, tutorial rooms T1–T8 and the Main Auditorium.
+            Reserve PEC lecture halls L1-L3,L8, L9,L20–L31, tutorial rooms T1–T8 and the Main Auditorium.
             Every request is checked against the central schedule before it is confirmed,
             so two organizations can never hold the same room at the same time.
           </p>
