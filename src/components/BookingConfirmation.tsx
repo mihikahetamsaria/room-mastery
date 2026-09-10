@@ -20,6 +20,7 @@ export type ConfirmedBooking = {
   days?: number;
   start: string;
   end: string;
+  timings?: { date: string; start: string; end: string }[];
   venues: string;
   updated: boolean;
 };
@@ -70,7 +71,13 @@ export function BookingConfirmation({
 
               <dt className="text-muted-foreground">Time</dt>
               <dd className="col-span-2 font-medium">
-                {formatRange(booking.start, booking.end)}
+                {booking.timings?.length
+                  ? booking.timings.map((timing) => (
+                      <div key={timing.date}>
+                        {formatDate(timing.date)}: {formatRange(timing.start, timing.end)}
+                      </div>
+                    ))
+                  : formatRange(booking.start, booking.end)}
               </dd>
 
               <dt className="text-muted-foreground">Purpose</dt>
