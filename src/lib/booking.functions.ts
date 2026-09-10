@@ -41,7 +41,7 @@ export const checkBookingConflictsFn = createServerFn({ method: "POST" })
       _date: data.date,
       _start: data.start,
       _end: data.end,
-      _exclude_booking_id: null,
+      _exclude_booking: null,
     });
     if (error) throw new Error(error.message);
     return {
