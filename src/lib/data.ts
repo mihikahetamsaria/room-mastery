@@ -69,6 +69,9 @@ export function useBookings() {
       if (error) throw error;
       return (data ?? []) as unknown as BookingRow[];
     },
+    staleTime: 0,
+    refetchOnMount: "always",
+    refetchOnWindowFocus: true,
   });
 }
 
