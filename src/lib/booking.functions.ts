@@ -18,7 +18,6 @@ export type BookingResult = {
 type CreateInput = {
   organizationId: string;
   purpose: Purpose;
-  customPurpose?: string;
   date: string;
   start: string;
   end: string;
@@ -51,7 +50,6 @@ export const updateBookingFn = createServerFn({ method: "POST" })
     const { data: result, error } = await context.supabase.rpc("update_booking", {
       _booking_id: data.bookingId,
       _purpose: data.purpose,
-      _custom_purpose: data.customPurpose ?? null,
       _date: data.date,
       _start: data.start,
       _end: data.end,
@@ -62,22 +60,21 @@ export const updateBookingFn = createServerFn({ method: "POST" })
     return result as unknown as BookingResult;
   });
 
-export const checkBookingConflictsFn = createServerFn({ method: "GET" })
+export const updateBookingFn = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator(
-    (input: { date: string; start: string; end: string; venueIds: string[] }) =>
-      input,
-  )
-  .handler(async ({ data, context }): Promise<{ conflicts: Conflict[] }> => {
-    const { data: result, error } = await context.supabase.rpc("find_conflicts", {
-      _venue_ids: data.venueIds,
+  .inputValidator((input: UpdateInput) => input)
+  .handler(async ({ data, context }): Promise<BookingResult> => {
+    const { data: result, error } = await context.supabase.rpc("update_booking", {
+      _booking_id: data.bookingId,
+      _purpose: data.purpose,
       _date: data.date,
       _start: data.start,
       _end: data.end,
+      _venue_ids: data.venueIds,
     });
 
     if (error) throw new Error(error.message);
-    return { conflicts: (result ?? []) as Conflict[] };
+    return result as unknown as BookingResult;
   });
 
 export const cancelBookingFn = createServerFn({ method: "POST" })
