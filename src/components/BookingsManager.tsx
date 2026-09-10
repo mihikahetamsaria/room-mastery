@@ -61,6 +61,7 @@ export function BookingsManager({
   const remove = useServerFn(deleteBookingFn);
 
   const [tab, setTab] = useState<"upcoming" | "past">("upcoming");
+  const [sortMode, setSortMode] = useState<"date" | "event">("date");
   const [orgFilter, setOrgFilter] = useState<string>("all");
   const [detail, setDetail] = useState<BookingRow | null>(null);
   const [editing, setEditing] = useState<BookingRow | null>(null);
@@ -68,7 +69,7 @@ export function BookingsManager({
   const today = todayISO();
 
   const rows = useMemo(() => {
-    return bookings
+    const filtered = bookings
       .filter((b) =>
         scope === "own" ? b.organization_id === organizationId : true,
       )
@@ -77,8 +78,10 @@ export function BookingsManager({
       )
       .filter((b) =>
         tab === "upcoming" ? b.date >= today : b.date < today,
-      )
-      .sort((a, b) =>
+      );
+  
+    if (sortMode === "date") {
+      return filtered.sort((a, b) =>
         tab === "upcoming"
           ? `${a.date}${a.start_time}`.localeCompare(
               `${b.date}${b.start_time}`,
@@ -87,7 +90,46 @@ export function BookingsManager({
               `${a.date}${a.start_time}`,
             ),
       );
-  }, [bookings, scope, organizationId, orgFilter, tab, today]);
+    }
+  
+    const groups = new Map<string, BookingRow[]>();
+  
+    for (const booking of filtered) {
+      const key = booking.booking_group_id ?? booking.id;
+      const group = groups.get(key) ?? [];
+      group.push(booking);
+      groups.set(key, group);
+    }
+  
+    return [...groups.values()]
+      .sort((a, b) => {
+        const aFirst = [...a].sort((x, y) =>
+          `${x.date}${x.start_time}`.localeCompare(
+            `${y.date}${y.start_time}`,
+          ),
+        )[0];
+        const bFirst = [...b].sort((x, y) =>
+          `${x.date}${x.start_time}`.localeCompare(
+            `${y.date}${y.start_time}`,
+          ),
+        )[0];
+  
+        return tab === "upcoming"
+          ? `${aFirst.date}${aFirst.start_time}`.localeCompare(
+              `${bFirst.date}${bFirst.start_time}`,
+            )
+          : `${bFirst.date}${bFirst.start_time}`.localeCompare(
+              `${aFirst.date}${aFirst.start_time}`,
+            );
+      })
+      .flatMap((group) =>
+        group.sort((a, b) =>
+          `${a.date}${a.start_time}`.localeCompare(
+            `${b.date}${b.start_time}`,
+          ),
+        ),
+      );
+  }, [bookings, scope, organizationId, orgFilter, tab, today, sortMode]);
 
   async function handleCancel(booking: BookingRow) {
     if (
@@ -240,23 +282,30 @@ export function BookingsManager({
 
         <div className="flex flex-wrap items-center gap-3">
           {scope === "all" ? (
-            <Select value={orgFilter} onValueChange={setOrgFilter}>
-              <SelectTrigger className="w-[190px]">
-                <SelectValue placeholder="Organization" />
-              </SelectTrigger>
-
-              <SelectContent>
-                <SelectItem value="all">
-                  All organizations
-                </SelectItem>
-
-                {orgs.map((o) => (
-                  <SelectItem key={o.id} value={o.id}>
-                    {o.abbreviation}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <>
+              <Select value={orgFilter} onValueChange={setOrgFilter}>
+                <SelectTrigger className="w-[190px]">
+                  <SelectValue placeholder="Organization" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All organizations</SelectItem>
+                  {orgs.map((o) => (
+                    <SelectItem key={o.id} value={o.id}>
+                      {o.abbreviation}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select value={sortMode} onValueChange={(v) => setSortMode(v as "date" | "event")}>
+                <SelectTrigger className="w-[150px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="date">By date</SelectItem>
+                  <SelectItem value="event">By event</SelectItem>
+                </SelectContent>
+              </Select>
+            </>
           ) : null}
 
           <Tabs
