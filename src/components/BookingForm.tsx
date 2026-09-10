@@ -149,6 +149,7 @@ export function BookingForm({
           days: dates.length,
           start: timings[0]?.start ?? start,
           end: timings[0]?.end ?? end,
+          timings: sameTime ? undefined : timings,
           venues: venues.filter((v) => venueIds.includes(v.id)).map((v) => v.code).join(", "),
           updated: false,
         });
