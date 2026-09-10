@@ -54,7 +54,7 @@ export type Database = {
           notes: string | null
           organization_id: string
           permission_signed: boolean
-          purpose: Database["public"]["Enums"]["booking_purpose"]
+          purpose: string
           start_time: string
           status: Database["public"]["Enums"]["booking_status"]
           updated_at: string
@@ -68,7 +68,7 @@ export type Database = {
           notes?: string | null
           organization_id: string
           permission_signed?: boolean
-          purpose: Database["public"]["Enums"]["booking_purpose"]
+          purpose: string
           start_time: string
           status?: Database["public"]["Enums"]["booking_status"]
           updated_at?: string
@@ -82,7 +82,7 @@ export type Database = {
           notes?: string | null
           organization_id?: string
           permission_signed?: boolean
-          purpose?: Database["public"]["Enums"]["booking_purpose"]
+          purpose?: string
           start_time?: string
           status?: Database["public"]["Enums"]["booking_status"]
           updated_at?: string
@@ -238,7 +238,7 @@ export type Database = {
           _date: string
           _end: string
           _organization_id: string
-          _purpose: Database["public"]["Enums"]["booking_purpose"]
+          _purpose: string
           _start: string
           _venue_ids: string[]
         }
@@ -286,7 +286,7 @@ export type Database = {
           _booking_id: string
           _date: string
           _end: string
-          _purpose: Database["public"]["Enums"]["booking_purpose"]
+          _purpose: string
           _start: string
           _venue_ids: string[]
         }
@@ -295,14 +295,6 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "org"
-      booking_purpose:
-        | "GBM"
-        | "Workshop"
-        | "Meeting"
-        | "Seminar"
-        | "Event"
-        | "Practice"
-        | "Other"
       booking_status: "confirmed" | "cancelled"
       org_category: "club" | "society"
     }
@@ -433,15 +425,6 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "org"],
-      booking_purpose: [
-        "GBM",
-        "Workshop",
-        "Meeting",
-        "Seminar",
-        "Event",
-        "Practice",
-        "Other",
-      ],
       booking_status: ["confirmed", "cancelled"],
       org_category: ["club", "society"],
     },
