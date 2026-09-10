@@ -25,7 +25,7 @@ export type BookingRow = {
 };
 
 const BOOKING_SELECT =
- "id,organization_id,purpose,date,start_time,end_time,status,event_done,permission_signed,..."
+  "id,organization_id,purpose,date,start_time,end_time,status,event_done,permission_signed,organizations(name,abbreviation,category),booking_venues(venues(id,code))";
 
 export function useVenues() {
   return useQuery({
