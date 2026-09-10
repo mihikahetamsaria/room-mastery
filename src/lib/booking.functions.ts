@@ -1,6 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import type { Purpose } from "@/lib/campus";
 
 export type Conflict = {
   venue_code: string;
@@ -17,7 +16,7 @@ export type BookingResult = {
 
 type CreateInput = {
   organizationId: string;
-  purpose: Purpose;
+  purpose: string;
   date: string;
   start: string;
   end: string;
@@ -32,23 +31,6 @@ export const createBookingFn = createServerFn({ method: "POST" })
   .handler(async ({ data, context }): Promise<BookingResult> => {
     const { data: result, error } = await context.supabase.rpc("create_booking", {
       _organization_id: data.organizationId,
-      _purpose: data.purpose,
-      _date: data.date,
-      _start: data.start,
-      _end: data.end,
-      _venue_ids: data.venueIds,
-    });
-
-    if (error) throw new Error(error.message);
-    return result as unknown as BookingResult;
-  });
-
-export const updateBookingFn = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((input: UpdateInput) => input)
-  .handler(async ({ data, context }): Promise<BookingResult> => {
-    const { data: result, error } = await context.supabase.rpc("update_booking", {
-      _booking_id: data.bookingId,
       _purpose: data.purpose,
       _date: data.date,
       _start: data.start,
