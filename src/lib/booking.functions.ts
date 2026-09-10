@@ -34,7 +34,6 @@ export const createBookingFn = createServerFn({ method: "POST" })
     const { data: result, error } = await context.supabase.rpc("create_booking", {
       _organization_id: data.organizationId,
       _purpose: data.purpose,
-      _custom_purpose: data.customPurpose ?? null,
       _date: data.date,
       _start: data.start,
       _end: data.end,
