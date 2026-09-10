@@ -175,26 +175,20 @@ export function BookingsManager({
 
     const escape = (v: string) => `"${v.replace(/"/g, '""')}"`;
 
-    const lines = [
-      header.join(","),
-      ...rows.map((b) =>
-        [
-          b.organizations?.abbreviation ?? "",
-          b.date,
-          toHHMM(b.start_time),
-          toHHMM(b.end_time),
-          venueCodes(b).join(" / "),
-          b.purpose === "Other" && b.custom_purpose?.trim()
-            ? b.custom_purpose.trim()
-            : b.purpose,
-          b.status,
-          b.event_done ? "yes" : "no",
-          b.permission_signed ? "yes" : "no",
-        ]
-          .map((v) => escape(String(v)))
-          .join(","),
-      ),
-    ];
+  const lines = [
+    header.join(","),
+    ...rows.map((b) => [
+      b.organizations?.abbreviation ?? "",
+      b.date,
+      toHHMM(b.start_time),
+      toHHMM(b.end_time),
+      venueCodes(b).join(" / "),
+      b.purpose,
+      b.status,
+      b.event_done ? "yes" : "no",
+      b.permission_signed ? "yes" : "no",
+    ].map((v) => escape(String(v))).join(",")),
+  ];
 
     const blob = new Blob([lines.join("\n")], {
       type: "text/csv;charset=utf-8;",
