@@ -43,9 +43,11 @@ function AppShell() {
   }
 
   const links = session?.isAdmin
-    ? [...NAV, { to: "/all-bookings", label: "Admin Console" } as const]
-    : NAV;
-
+  ? NAV.filter((link) => link.to !== "/my-bookings").concat({
+      to: "/all-bookings",
+      label: "Admin Console",
+    })
+  : NAV;
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
