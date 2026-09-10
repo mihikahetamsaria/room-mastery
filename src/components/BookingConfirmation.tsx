@@ -32,10 +32,6 @@ export function BookingConfirmation({
   booking: ConfirmedBooking | null;
   onClose: () => void;
 }) {
-  const displayPurpose =
-    booking?.purpose === "Other" && booking.customPurpose?.trim()
-      ? booking.customPurpose.trim()
-      : booking?.purpose;
 
   return (
     <Dialog open={Boolean(booking)} onOpenChange={(open) => !open && onClose()}>
@@ -79,7 +75,7 @@ export function BookingConfirmation({
               </dd>
 
               <dt className="text-muted-foreground">Purpose</dt>
-              <dd className="col-span-2 font-medium">{displayPurpose}</dd>
+              <dd className="col-span-2 font-medium">{booking?.purpose}</dd>
             </dl>
 
             <DialogFooter className="gap-2 sm:justify-between">
