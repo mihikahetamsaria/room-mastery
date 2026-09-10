@@ -128,9 +128,10 @@ export function BookingForm({
           toast.error("Range booking rejected — venue clash detected.");
           return;
         }
+        const bookingGroupId = crypto.randomUUID();
         let firstId = "";
         for (const timing of timings) {
-          const result = await create({ data: { organizationId, purpose: purpose.trim(), date: timing.date, start: timing.start, end: timing.end, venueIds } });
+          const result = await create({ data: { organizationId, purpose: purpose.trim(), date: timing.date, start: timing.start, end: timing.end, venueIds, bookingGroupId } });
           if (!result.ok) {
             setConflicts((result.conflicts ?? []).map((c) => ({ ...c, date: timing.date })));
             toast.error("Range booking rejected — venue clash detected.");
