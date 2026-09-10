@@ -25,6 +25,31 @@ type CreateInput = {
 
 type UpdateInput = CreateInput & { bookingId: string };
 
+export const checkBookingConflictsFn = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(
+    (input: {
+      date: string;
+      start: string;
+      end: string;
+      venueIds: string[];
+    }) => input,
+  )
+  .handler(async ({ data, context }): Promise<BookingResult> => {
+    const { data: conflicts, error } = await context.supabase.rpc("find_conflicts", {
+      _venue_ids: data.venueIds,
+      _date: data.date,
+      _start: data.start,
+      _end: data.end,
+      _exclude_booking_id: null,
+    });
+    if (error) throw new Error(error.message);
+    return {
+      ok: !conflicts || conflicts.length === 0,
+      conflicts: (conflicts ?? []) as Conflict[],
+    };
+  });
+
 export const createBookingFn = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: CreateInput) => input)
