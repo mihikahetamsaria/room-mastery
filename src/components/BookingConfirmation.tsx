@@ -15,7 +15,6 @@ import { formatDate, formatRange, type Purpose } from "@/lib/campus";
 export type ConfirmedBooking = {
   reference: string;
   purpose: Purpose;
-  customPurpose?: string;
   date: string;
   endDate?: string;
   days?: number;
