@@ -52,12 +52,14 @@ function DashboardPage() {
   const { data: bookings = [] } = useBookings();
   const [detail, setDetail] = useState<BookingRow | null>(null);
   const today = todayISO();
-
-  const orgId = session?.organization?.id ?? null;
+  const isAdmin = session?.isAdmin ?? false;
 
   const mine = useMemo(
-    () => bookings.filter((b) => b.organization_id === orgId && b.status === "confirmed"),
-    [bookings, orgId],
+    () =>
+      bookings.filter(
+        (b) => b.organization_id === session?.organization?.id && b.status === "confirmed",
+      ),
+    [bookings, session?.organization?.id],
   );
 
   const upcoming = useMemo(
@@ -66,25 +68,31 @@ function DashboardPage() {
   );
 
   const stats = useMemo(() => {
+    const source = isAdmin
+      ? bookings.filter((b) => b.status === "confirmed")
+      : mine;
     const now = new Date();
     const weekEnd = new Date(now);
     weekEnd.setDate(now.getDate() + 7);
     const weekEndISO = weekEnd.toISOString().slice(0, 10);
     const monthPrefix = today.slice(0, 7);
-
     const counts = new Map<string, number>();
-    for (const b of mine) {
-      for (const code of venueCodes(b)) counts.set(code, (counts.get(code) ?? 0) + 1);
+
+    for (const b of source) {
+      for (const code of venueCodes(b)) {
+        counts.set(code, (counts.get(code) ?? 0) + 1);
+      }
     }
+
     const mostUsed = [...counts.entries()].sort((a, b) => b[1] - a[1])[0];
 
     return {
-      total: mine.length,
-      thisWeek: mine.filter((b) => b.date >= today && b.date <= weekEndISO).length,
-      thisMonth: mine.filter((b) => b.date.startsWith(monthPrefix)).length,
+      total: source.length,
+      thisWeek: source.filter((b) => b.date >= today && b.date <= weekEndISO).length,
+      thisMonth: source.filter((b) => b.date.startsWith(monthPrefix)).length,
       mostUsed: mostUsed ? `${mostUsed[0]} (${mostUsed[1]})` : "—",
     };
-  }, [mine, today]);
+  }, [bookings, isAdmin, mine, today]);
 
   const todaysCampus = useMemo(
     () => bookings.filter((b) => b.date === today && b.status === "confirmed"),
@@ -95,69 +103,74 @@ function DashboardPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">
-          {session?.isAdmin
+          {isAdmin
             ? "Administrator dashboard"
             : `Welcome, ${session?.organization?.abbreviation ?? ""}`}
         </h1>
         <p className="text-sm text-muted-foreground">
-          {session?.isAdmin
+          {isAdmin
             ? "Campus-wide visibility over every organization's bookings."
             : session?.organization?.name}
         </p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="Total bookings" value={stats.total} />
+        <StatCard
+          label={isAdmin ? "Confirmed bookings" : "Total bookings"}
+          value={stats.total}
+        />
         <StatCard label="Next 7 days" value={stats.thisWeek} />
         <StatCard label="This month" value={stats.thisMonth} />
         <StatCard label="Most-used venue" value={stats.mostUsed} />
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Your upcoming bookings</CardTitle>
-        </CardHeader>
-        <CardContent className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>Time</TableHead>
-                <TableHead>Venue(s)</TableHead>
-                <TableHead>Purpose</TableHead>
-                <TableHead className="text-right">Details</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {upcoming.length === 0 ? (
+      {!isAdmin ? (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Your upcoming bookings</CardTitle>
+          </CardHeader>
+          <CardContent className="overflow-x-auto">
+            <Table>
+              <TableHeader>
                 <TableRow>
-                  <TableCell colSpan={5} className="text-muted-foreground">
-                    No upcoming bookings.
-                  </TableCell>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Time</TableHead>
+                  <TableHead>Venue(s)</TableHead>
+                  <TableHead>Purpose</TableHead>
+                  <TableHead className="text-right">Details</TableHead>
                 </TableRow>
-              ) : (
-                upcoming.map((b) => (
-                  <TableRow key={b.id}>
-                    <TableCell className="whitespace-nowrap">{formatDate(b.date)}</TableCell>
-                    <TableCell className="whitespace-nowrap">
-                      {formatRange(b.start_time, b.end_time)}
-                    </TableCell>
-                    <TableCell>{venueCodes(b).join(", ")}</TableCell>
-                    <TableCell>
-                      <PurposeBadge purpose={b.purpose} />
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Button size="sm" variant="ghost" onClick={() => setDetail(b)}>
-                        View
-                      </Button>
+              </TableHeader>
+              <TableBody>
+                {upcoming.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-muted-foreground">
+                      No upcoming bookings.
                     </TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+                ) : (
+                  upcoming.map((b) => (
+                    <TableRow key={b.id}>
+                      <TableCell className="whitespace-nowrap">{formatDate(b.date)}</TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        {formatRange(b.start_time, b.end_time)}
+                      </TableCell>
+                      <TableCell>{venueCodes(b).join(", ")}</TableCell>
+                      <TableCell>
+                        <PurposeBadge purpose={b.purpose} />
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button size="sm" variant="ghost" onClick={() => setDetail(b)}>
+                          View
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      ) : null}
 
       <Card>
         <CardHeader>
@@ -201,7 +214,10 @@ function DashboardPage() {
         </CardContent>
       </Card>
 
-      <BookingDetailDialog booking={detail} onOpenChange={(o) => !o && setDetail(null)} />
+      <BookingDetailDialog
+        booking={detail}
+        onOpenChange={(o) => !o && setDetail(null)}
+      />
     </div>
   );
 }
