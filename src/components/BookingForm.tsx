@@ -84,7 +84,7 @@ export function BookingForm({
   }
   function setSameTimeMode(value: boolean) {
     setSameTime(value);
-    if (value) setDayTimings(rangeDates.map((d) => ({ date: d, start, end })));
+    setDayTimings(rangeDates.map((d) => ({ date: d, start, end })));
   }
   function updateDayTiming(dateValue: string, field: "start" | "end", value: string) {
     setDayTimings((previous) => previous.map((timing) => timing.date === dateValue ? { ...timing, [field]: value } : timing));
