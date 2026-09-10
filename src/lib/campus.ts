@@ -1,14 +1,4 @@
-export const PURPOSES = [
-  "GBM",
-  "Workshop",
-  "Meeting",
-  "Seminar",
-  "Event",
-  "Practice",
-  "Other",
-] as const;
-
-export type Purpose = (typeof PURPOSES)[number];
+export type Purpose = string;
 
 export const EMAIL_DOMAIN = "venue-booking-pec.vercel.app";
 
