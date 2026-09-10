@@ -1,6 +1,6 @@
 # Campus Bookings Hub
 
-# Lovable Prompt — College Club & Society Venue Booking Website
+College Club & Society Venue Booking Website
 
 Copy everything below into Lovable as your project prompt.
 
