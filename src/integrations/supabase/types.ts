@@ -46,6 +46,7 @@ export type Database = {
       }
       bookings: {
         Row: {
+          booking_group_id: string | null
           created_at: string
           date: string
           end_time: string
@@ -60,6 +61,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          booking_group_id?: string | null
           created_at?: string
           date: string
           end_time: string
@@ -74,6 +76,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          booking_group_id?: string | null
           created_at?: string
           date?: string
           end_time?: string
@@ -235,6 +238,7 @@ export type Database = {
       claim_organization: { Args: { _abbr: string }; Returns: Json }
       create_booking: {
         Args: {
+          booking_group_id?: string | null
           _date: string
           _end: string
           _organization_id: string
