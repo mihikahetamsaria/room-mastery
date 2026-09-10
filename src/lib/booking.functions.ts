@@ -21,6 +21,7 @@ type CreateInput = {
   start: string;
   end: string;
   venueIds: string[];
+  bookingGroupId?: string | null;
 };
 
 type UpdateInput = CreateInput & { bookingId: string };
@@ -61,6 +62,7 @@ export const createBookingFn = createServerFn({ method: "POST" })
       _start: data.start,
       _end: data.end,
       _venue_ids: data.venueIds,
+      _booking_group_id: data.bookingGroupId ?? null,
     });
 
     if (error) throw new Error(error.message);
