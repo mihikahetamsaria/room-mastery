@@ -353,14 +353,7 @@ export function BookingsManager({
                     </TableCell>
 
                     <TableCell>
-                      <PurposeBadge
-                        purpose={
-                          b.purpose === "Other" &&
-                          b.custom_purpose?.trim()
-                            ? b.custom_purpose.trim()
-                            : b.purpose
-                        }
-                      />
+                      <PurposeBadge purpose={b.purpose} />
                     </TableCell>
 
                     <TableCell>
@@ -472,7 +465,6 @@ export function BookingsManager({
               submitLabel="Save changes"
               initial={{
                 purpose: editing.purpose,
-                customPurpose: editing.custom_purpose ?? "",
                 date: editing.date,
                 start: toHHMM(editing.start_time),
                 end: toHHMM(editing.end_time),
